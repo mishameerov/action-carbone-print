@@ -9,6 +9,7 @@ import {
 } from '@nocobase/client';
 import { useTranslation } from 'react-i18next';
 import { NAMESPACE, tStr } from './locale';
+import { TemplateLibraryManager } from './TemplateLibraryManager';
 
 const getAttachmentId = (value: any) => {
   const attachment = Array.isArray(value) ? value[0] : value;
@@ -21,7 +22,6 @@ const carbonePrintSettingsSchema: ISchema = {
     template: {
       type: 'array',
       title: tStr('Template'),
-      required: true,
       'x-decorator': 'FormItem',
       'x-component': 'Upload.Attachment',
       'x-component-props': {
@@ -30,6 +30,27 @@ const carbonePrintSettingsSchema: ISchema = {
         maxCount: 1,
         multiple: false,
       },
+    },
+    templateDraftTitle: {
+      type: 'string',
+      title: tStr('Template name'),
+      'x-decorator': 'FormItem',
+      'x-component': 'Input',
+      'x-component-props': {
+        placeholder: tStr('Enter template name'),
+      },
+    },
+    templateRefId: {
+      type: 'number',
+      'x-decorator': 'FormItem',
+      'x-component': 'InputNumber',
+      'x-hidden': true,
+    },
+    templateLibrary: {
+      type: 'void',
+      title: tStr('Template library'),
+      'x-decorator': 'FormItem',
+      'x-component': 'TemplateLibraryManager',
     },
     outputFormat: {
       type: 'string',
@@ -124,7 +145,7 @@ export const carbonePrintActionSettings = new SchemaSettings({
         return {
           title: t('Carbone print settings'),
           schema: carbonePrintSettingsSchema,
-          components: { ArrayItems },
+          components: { ArrayItems, TemplateLibraryManager },
           initialValues: {
             outputFormat: 'pdf',
             appends: [],

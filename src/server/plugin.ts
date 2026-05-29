@@ -1,5 +1,6 @@
 import { Logger, LoggerOptions } from '@nocobase/logger';
 import { Plugin } from '@nocobase/server';
+import { resolve } from 'path';
 import { carbonePrint } from './actions/carbone-print';
 
 export class PluginActionCarbonePrintServer extends Plugin {
@@ -42,6 +43,8 @@ export class PluginActionCarbonePrintServer extends Plugin {
       filename: '%DATE%.log',
     } as LoggerOptions);
 
+    await this.importCollections(resolve(__dirname, 'collections'));
+
     this.app.dataSourceManager.afterAddDataSource((dataSource) => {
       dataSource.resourceManager.registerActionHandler('carbonePrint', carbonePrint.bind(this));
       dataSource.acl.setAvailableAction('carbonePrint', {
@@ -50,6 +53,8 @@ export class PluginActionCarbonePrintServer extends Plugin {
         aliases: ['carbonePrint'],
       });
     });
+
+    this.app.acl.allow('carbonePrintTemplates', ['list', 'get', 'create', 'update', 'destroy'], 'loggedIn');
   }
 }
 

@@ -56,9 +56,9 @@ const getFirstAttachment = (value) => {
   return value;
 };
 const getAttachmentId = (value) => {
-  var _a, _b, _c;
+  var _a, _b, _c, _d;
   const attachment = getFirstAttachment(value);
-  return (attachment == null ? void 0 : attachment.id) || ((_b = (_a = attachment == null ? void 0 : attachment.response) == null ? void 0 : _a.data) == null ? void 0 : _b.id) || ((_c = attachment == null ? void 0 : attachment.file) == null ? void 0 : _c.id);
+  return (attachment == null ? void 0 : attachment.id) || ((_a = attachment == null ? void 0 : attachment.data) == null ? void 0 : _a.id) || ((_c = (_b = attachment == null ? void 0 : attachment.response) == null ? void 0 : _b.data) == null ? void 0 : _c.id) || ((_d = attachment == null ? void 0 : attachment.file) == null ? void 0 : _d.id);
 };
 const getContentType = (format) => {
   if (format === "pdf") {
@@ -88,7 +88,7 @@ const applyAppendFilters = (record, appends) => {
   }
 };
 async function carbonePrint(ctx, next) {
-  var _a, _b, _c, _d;
+  var _a, _b, _c, _d, _e, _f;
   const params = ctx.action.params || {};
   const values = params.values || {};
   const settings = values.settings || {};
@@ -96,7 +96,18 @@ async function carbonePrint(ctx, next) {
   if (!allowedOutputFormats.has(outputFormat)) {
     ctx.throw(400, "Unsupported output format");
   }
-  const attachmentId = settings.templateId || getAttachmentId(settings.template);
+  let attachmentId = settings.templateId || getAttachmentId(settings.template);
+  if (settings.templateRefId) {
+    const templateRecord = await ctx.db.getRepository("carbonePrintTemplates").findOne({
+      filterByTk: settings.templateRefId,
+      appends: ["attachment"]
+    });
+    const templateData = ((_a = templateRecord == null ? void 0 : templateRecord.toJSON) == null ? void 0 : _a.call(templateRecord)) || templateRecord;
+    if (!templateData || templateData.isActive === false) {
+      ctx.throw(404, "Template record not found or disabled");
+    }
+    attachmentId = templateData.attachmentId || ((_b = templateData.attachment) == null ? void 0 : _b.id) || attachmentId;
+  }
   if (!attachmentId) {
     ctx.throw(400, ctx.t("Please select a Carbone template first", { ns: "action-carbone-print" }));
   }
@@ -113,15 +124,15 @@ async function carbonePrint(ctx, next) {
   const repository = ctx.getCurrentRepository();
   const dataSource = ctx.dataSource;
   const collection = repository.collection;
-  const recordId = ((_a = values.currentRecord) == null ? void 0 : _a.id) ?? params.filterByTk;
+  const recordId = ((_c = values.currentRecord) == null ? void 0 : _c.id) ?? params.filterByTk;
   if (!recordId) {
     ctx.throw(400, "Current record id is required");
   }
   const appends = Array.isArray(settings.appends) ? settings.appends.filter((item) => item == null ? void 0 : item.name) : [];
-  const currentRecord = (_b = await repository.findOne({
+  const currentRecord = (_d = await repository.findOne({
     filterByTk: recordId,
     appends: appends.map((append) => append.name)
-  })) == null ? void 0 : _b.toJSON();
+  })) == null ? void 0 : _d.toJSON();
   if (!currentRecord) {
     ctx.throw(404, "Current record not found");
   }
@@ -138,10 +149,10 @@ async function carbonePrint(ctx, next) {
       {
         data: {
           currentRecord,
-          currentUser: (_c = ctx.auth) == null ? void 0 : _c.user,
+          currentUser: (_e = ctx.auth) == null ? void 0 : _e.user,
           currentTime: (/* @__PURE__ */ new Date()).toISOString(),
           $nForm: values.$nForm,
-          $nToken: (_d = ctx.getBearerToken) == null ? void 0 : _d.call(ctx),
+          $nToken: (_f = ctx.getBearerToken) == null ? void 0 : _f.call(ctx),
           collectionName: collection.name,
           dataSourceKey: dataSource == null ? void 0 : dataSource.key
         },

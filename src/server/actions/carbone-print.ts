@@ -17,6 +17,7 @@ const allowedOutputFormats = new Set(['pdf', 'docx']);
 type PrintSettings = {
   template?: any[] | any;
   templateId?: number | string;
+  templateRefId?: number | string;
   outputFormat?: string;
   appends?: Array<{ name?: string; filter?: string }>;
 };
@@ -74,7 +75,20 @@ export async function carbonePrint(this: PluginActionCarbonePrintServer, ctx: Co
     ctx.throw(400, 'Unsupported output format');
   }
 
-  const attachmentId = settings.templateId || getAttachmentId(settings.template);
+  let attachmentId = settings.templateId || getAttachmentId(settings.template);
+
+  if (settings.templateRefId) {
+    const templateRecord = await ctx.db.getRepository('carbonePrintTemplates').findOne({
+      filterByTk: settings.templateRefId,
+      appends: ['attachment'],
+    });
+    const templateData = templateRecord?.toJSON?.() || templateRecord;
+    if (!templateData || templateData.isActive === false) {
+      ctx.throw(404, 'Template record not found or disabled');
+    }
+    attachmentId = templateData.attachmentId || templateData.attachment?.id || attachmentId;
+  }
+
   if (!attachmentId) {
     ctx.throw(400, ctx.t('Please select a Carbone template first', { ns: 'action-carbone-print' }));
   }

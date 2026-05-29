@@ -41,8 +41,9 @@ export const useCarbonePrintAction = () => {
         const settings = fieldSchema?.['x-action-settings'] || {};
         const currentRecord = blockType === 'form' ? form.values : recordData;
         const templateId = settings.templateId || getAttachmentId(settings.template);
+        const templateRefId = settings.templateRefId;
 
-        if (!templateId) {
+        if (!templateRefId && !templateId) {
           message.error(t('Please select a Carbone template first'));
           return;
         }
@@ -53,6 +54,7 @@ export const useCarbonePrintAction = () => {
               settings: {
                 ...settings,
                 templateId,
+                templateRefId,
               },
               currentRecord: {
                 id: currentRecord?.id,

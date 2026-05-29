@@ -31,6 +31,7 @@ __export(plugin_exports, {
 });
 module.exports = __toCommonJS(plugin_exports);
 var import_server = require("@nocobase/server");
+var import_path = require("path");
 var import_carbone_print = require("./actions/carbone-print");
 class PluginActionCarbonePrintServer extends import_server.Plugin {
   logger;
@@ -67,6 +68,7 @@ class PluginActionCarbonePrintServer extends import_server.Plugin {
       dirname: "action-carbone-print",
       filename: "%DATE%.log"
     });
+    await this.importCollections((0, import_path.resolve)(__dirname, "collections"));
     this.app.dataSourceManager.afterAddDataSource((dataSource) => {
       dataSource.resourceManager.registerActionHandler("carbonePrint", import_carbone_print.carbonePrint.bind(this));
       dataSource.acl.setAvailableAction("carbonePrint", {
@@ -75,6 +77,7 @@ class PluginActionCarbonePrintServer extends import_server.Plugin {
         aliases: ["carbonePrint"]
       });
     });
+    this.app.acl.allow("carbonePrintTemplates", ["list", "get", "create", "update", "destroy"], "loggedIn");
   }
 }
 var plugin_default = PluginActionCarbonePrintServer;
