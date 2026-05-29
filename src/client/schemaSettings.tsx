@@ -12,7 +12,7 @@ import { NAMESPACE, tStr } from './locale';
 
 const getAttachmentId = (value: any) => {
   const attachment = Array.isArray(value) ? value[0] : value;
-  return attachment?.id || attachment?.response?.data?.id || attachment?.file?.id;
+  return attachment?.id || attachment?.data?.id || attachment?.response?.data?.id || attachment?.file?.id;
 };
 
 const carbonePrintSettingsSchema: ISchema = {
