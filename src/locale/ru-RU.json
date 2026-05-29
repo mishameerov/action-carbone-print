@@ -3,6 +3,9 @@
   "Carbone print settings": "Настройки печати Carbone",
   "Template": "Шаблон",
   "Output format": "Формат результата",
+  "Response behavior": "Поведение ответа",
+  "Download file": "Скачать файл",
+  "Open in browser": "Открыть в браузере",
   "Relations": "Связи",
   "Relation field name": "Системное имя поля связи",
   "Optional filtrex filter": "Необязательный фильтр filtrex",
@@ -10,6 +13,9 @@
   "Template name": "Название шаблона",
   "Enter template name": "Введите название шаблона",
   "Template library": "Библиотека шаблонов",
+  "Result": "Результат",
+  "Related fields": "Связанные поля",
+  "Add": "Добавить",
   "Fill template name and upload DOCX first": "Сначала укажите название и загрузите DOCX",
   "Template added to library": "Шаблон добавлен в библиотеку",
   "Name": "Название",
@@ -24,5 +30,6 @@
   "Active": "Активен",
   "Disabled": "Отключен",
   "Please select a Carbone template first": "Сначала выберите шаблон Carbone",
+  "Inline preview is available only for PDF. Downloading file instead.": "Предпросмотр в браузере доступен только для PDF. Файл будет скачан.",
   "Error generating document": "Ошибка генерации документа"
 }

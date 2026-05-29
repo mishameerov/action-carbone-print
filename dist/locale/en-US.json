@@ -3,6 +3,9 @@
   "Carbone print settings": "Carbone print settings",
   "Template": "Template",
   "Output format": "Output format",
+  "Response behavior": "Response behavior",
+  "Download file": "Download file",
+  "Open in browser": "Open in browser",
   "Relations": "Relations",
   "Relation field name": "Relation field name",
   "Optional filtrex filter": "Optional filtrex filter",
@@ -10,6 +13,9 @@
   "Template name": "Template name",
   "Enter template name": "Enter template name",
   "Template library": "Template library",
+  "Result": "Result",
+  "Related fields": "Related fields",
+  "Add": "Add",
   "Fill template name and upload DOCX first": "Fill template name and upload DOCX first",
   "Template added to library": "Template added to library",
   "Name": "Name",
@@ -24,5 +30,6 @@
   "Active": "Active",
   "Disabled": "Disabled",
   "Please select a Carbone template first": "Please select a Carbone template first",
+  "Inline preview is available only for PDF. Downloading file instead.": "Inline preview is available only for PDF. Downloading file instead.",
   "Error generating document": "Error generating document"
 }

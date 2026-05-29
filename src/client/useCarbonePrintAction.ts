@@ -69,6 +69,20 @@ export const useCarbonePrintAction = () => {
 
         const blob = response?.data instanceof Blob ? response.data : new Blob([response?.data]);
         const filename = getFilename(response?.headers?.['content-disposition']) || `document.${settings.outputFormat || 'pdf'}`;
+        const responseType = settings.responseType || 'download';
+        const outputFormat = settings.outputFormat || 'pdf';
+
+        if (responseType === 'inline' && outputFormat === 'pdf') {
+          const url = URL.createObjectURL(blob);
+          window.open(url, '_blank', 'noopener,noreferrer');
+          setTimeout(() => URL.revokeObjectURL(url), 60 * 1000);
+          return;
+        }
+
+        if (responseType === 'inline' && outputFormat !== 'pdf') {
+          message.info(t('Inline preview is available only for PDF. Downloading file instead.'));
+        }
+
         saveAs(blob, filename);
       } catch (error) {
         console.error(error);

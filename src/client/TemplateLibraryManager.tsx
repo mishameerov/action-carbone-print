@@ -1,14 +1,9 @@
 import { useForm } from '@formily/react';
 import { useAPIClient, useRequest } from '@nocobase/client';
-import { App, Button, Space, Table, Tag } from 'antd';
+import { Button, Space, Table, Tag } from 'antd';
 import React from 'react';
 import { useMemo } from 'react';
 import { useCarbonePrintTranslation } from './locale';
-
-const getAttachmentId = (value: any) => {
-  const attachment = Array.isArray(value) ? value[0] : value;
-  return attachment?.id || attachment?.data?.id || attachment?.response?.data?.id || attachment?.file?.id;
-};
 
 const extractList = (response: any) => {
   return response?.data?.data || response?.data || [];
@@ -17,9 +12,9 @@ const extractList = (response: any) => {
 export const TemplateLibraryManager = () => {
   const form = useForm();
   const api = useAPIClient();
-  const { message } = App.useApp();
   const { t } = useCarbonePrintTranslation();
   const selectedId = form.values?.templateRefId;
+  const refreshKey = form.values?.templateLibraryRefreshKey;
 
   const { data, loading, refreshAsync } = useRequest(
     async () => {
@@ -30,37 +25,10 @@ export const TemplateLibraryManager = () => {
       });
       return extractList(response);
     },
-    { refreshDeps: [] },
+    { refreshDeps: [refreshKey] },
   );
 
   const items = data || [];
-
-  const addToLibrary = async () => {
-    const title = form.values?.templateDraftTitle;
-    const templateValue = form.values?.template;
-    const attachmentId = getAttachmentId(templateValue);
-    if (!title || !attachmentId) {
-      message.error(t('Fill template name and upload DOCX first'));
-      return;
-    }
-
-    await api.resource('carbonePrintTemplates').create({
-      values: {
-        title,
-        attachmentId,
-        isActive: true,
-      },
-    });
-
-    form.setValues({
-      ...form.values,
-      templateDraftTitle: '',
-      templateRefId: undefined,
-      template: [],
-    });
-    await refreshAsync();
-    message.success(t('Template added to library'));
-  };
 
   const columns = useMemo(
     () => [
@@ -136,7 +104,6 @@ export const TemplateLibraryManager = () => {
         pagination={{ pageSize: 6, hideOnSinglePage: false }}
       />
       <Space>
-        <Button onClick={addToLibrary}>{t('Add to library')}</Button>
         <Button onClick={() => refreshAsync()}>{t('Refresh')}</Button>
       </Space>
     </Space>

@@ -19,6 +19,7 @@ type PrintSettings = {
   templateId?: number | string;
   templateRefId?: number | string;
   outputFormat?: string;
+  responseType?: 'download' | 'inline';
   appends?: Array<{ name?: string; filter?: string }>;
 };
 
@@ -70,6 +71,7 @@ export async function carbonePrint(this: PluginActionCarbonePrintServer, ctx: Co
   const values = params.values || {};
   const settings: PrintSettings = values.settings || {};
   const outputFormat = settings.outputFormat || 'pdf';
+  const responseType = settings.responseType || 'download';
 
   if (!allowedOutputFormats.has(outputFormat)) {
     ctx.throw(400, 'Unsupported output format');
@@ -162,7 +164,8 @@ export async function carbonePrint(this: PluginActionCarbonePrintServer, ctx: Co
     const filename = getDownloadName(file, outputFormat);
 
     ctx.withoutDataWrapping = true;
-    ctx.set('Content-Disposition', `attachment; filename="${encodeURIComponent(filename)}"`);
+    const dispositionType = responseType === 'inline' ? 'inline' : 'attachment';
+    ctx.set('Content-Disposition', `${dispositionType}; filename="${encodeURIComponent(filename)}"`);
     ctx.set('Content-Type', getContentType(outputFormat));
     ctx.body = body;
     this.logger.info(`carbonePrint:${collection.name}:${recordId} rendered ${filename}`);

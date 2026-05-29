@@ -93,6 +93,7 @@ async function carbonePrint(ctx, next) {
   const values = params.values || {};
   const settings = values.settings || {};
   const outputFormat = settings.outputFormat || "pdf";
+  const responseType = settings.responseType || "download";
   if (!allowedOutputFormats.has(outputFormat)) {
     ctx.throw(400, "Unsupported output format");
   }
@@ -167,7 +168,8 @@ async function carbonePrint(ctx, next) {
     const body = await (0, import_consumers.buffer)(carboneStream);
     const filename = getDownloadName(file, outputFormat);
     ctx.withoutDataWrapping = true;
-    ctx.set("Content-Disposition", `attachment; filename="${encodeURIComponent(filename)}"`);
+    const dispositionType = responseType === "inline" ? "inline" : "attachment";
+    ctx.set("Content-Disposition", `${dispositionType}; filename="${encodeURIComponent(filename)}"`);
     ctx.set("Content-Type", getContentType(outputFormat));
     ctx.body = body;
     this.logger.info(`carbonePrint:${collection.name}:${recordId} rendered ${filename}`);
