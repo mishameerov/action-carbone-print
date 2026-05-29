@@ -1,0 +1,12 @@
+{
+  "Carbone print": "Печать Carbone",
+  "Carbone print settings": "Настройки печати Carbone",
+  "Template": "Шаблон",
+  "Output format": "Формат результата",
+  "Relations": "Связи",
+  "Relation field name": "Системное имя поля связи",
+  "Optional filtrex filter": "Необязательный фильтр filtrex",
+  "Add relation": "Добавить связь",
+  "Please select a Carbone template first": "Сначала выберите шаблон Carbone",
+  "Error generating document": "Ошибка генерации документа"
+}
