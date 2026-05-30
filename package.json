@@ -1,5 +1,5 @@
 {
-  "name": "@nocobase/plugin-action-carbone-print",
+  "name": "@mishameerov/action-carbone-print",
   "version": "0.1.4",
   "main": "dist/server/index.js",
   "displayName": "Action: Carbone print",
